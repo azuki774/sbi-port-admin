@@ -21,13 +21,42 @@ type CSVRecord struct {
 }
 
 func (c *CSVRecord) Load() (fundsInfo []model.DailyRecord, err error) {
-	// file open
+	f, err := os.Open(c.FilePath)
+	if err != nil {
+		return []model.DailyRecord{}, err
+	}
+	defer f.Close()
 
-	// fundsload
+	csvData, err := c.portCSVToString(f)
+	if err != nil {
+		return []model.DailyRecord{}, err
+	}
+
+	fundsInfo, err = c.fundsLoad(csvData)
+	if err != nil {
+		return []model.DailyRecord{}, err
+	}
+
 	return fundsInfo, nil
 }
 
-func fundsLoad(csvData [][]string) (fundsInfo []model.DailyRecord, err error) {
+func (c *CSVRecord) portCSVToString(osf *os.File) (records [][]string, err error) {
+	r := csv.NewReader(osf)
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		records = append(records, record)
+	}
+	return records, nil
+}
+
+func (c *CSVRecord) fundsLoad(csvData [][]string) (fundsInfo []model.DailyRecord, err error) {
 	index := 0
 	for _, v := range csvData {
 		if index != 0 {
@@ -35,8 +64,8 @@ func fundsLoad(csvData [][]string) (fundsInfo []model.DailyRecord, err error) {
 			var nowfundInfo model.DailyRecord
 			err := fundLoad(&nowfundInfo, v)
 			if err != nil {
-				fmt.Printf("skip file: %v", nowfundInfo.FundName)
-				return nil, err
+				c.Logger.Warn("parse error", zap.Error(err))
+				return nil, nil
 			}
 			fundsInfo = append(fundsInfo, nowfundInfo)
 		}
@@ -93,20 +122,4 @@ func fundLoad(fundInfo *model.DailyRecord, rowData []string) (err error) {
 	}
 
 	return nil
-}
-
-func (c *CSVRecord) portCSVToString(osf *os.File) (records [][]string, err error) {
-	r := csv.NewReader(osf)
-	for {
-		record, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return nil, err
-		}
-
-		records = append(records, record)
-	}
-	return records, nil
 }

@@ -1,0 +1,3 @@
+FROM alpine:latest
+ADD build/bin/sbiport-server /usr/local/bin/sbi-port-admin
+CMD ["/usr/local/bin/sbiport-server"]
