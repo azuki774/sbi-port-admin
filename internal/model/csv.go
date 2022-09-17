@@ -63,12 +63,12 @@ func fundLoad(fundInfo *DailyRecord, rowData []string) (err error) {
 		return fmt.Errorf("fundInfo.NowPrice Atoi error: %w", err)
 	}
 
-	fundInfo.TheDayBefore, err = strconv.Atoi(rowData[6]) // 前日比
+	fundInfo.ThedayBefore, err = strconv.Atoi(rowData[6]) // 前日比
 	if err != nil {
 		return fmt.Errorf("fundInfo.TheDayBefore Atoi error: %w", err)
 	}
 
-	fundInfo.TheDayBeforeRatio, err = strconv.ParseFloat(rowData[7], 64) // 前日比（％）
+	fundInfo.ThedayBeforeRatio, err = strconv.ParseFloat(rowData[7], 64) // 前日比（％）
 	if err != nil {
 		return fmt.Errorf("fundInfo.TheDayBeforeRatio ParseFloat error: %w", err)
 	}

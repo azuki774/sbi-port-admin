@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"azuki774/sbiport-server/internal/model"
+
 	"gorm.io/gorm"
 )
 
@@ -14,4 +16,9 @@ func (dbR *DBRepository) CloseDB() (err error) {
 		return err
 	}
 	return sqlDB.Close()
+}
+
+func (dbR *DBRepository) SaveRecords(records []model.DailyRecord) (err error) {
+	dbR.Conn.Create(&records)
+	return nil
 }

@@ -1,11 +1,11 @@
-CREATE TABLE daily_record (
+CREATE TABLE daily_records (
     id INT AUTO_INCREMENT,
-    fund_name VARCHAR(255) NOT NULL,
     record_date DATE NOT NULL,
+    fund_name VARCHAR(255) NOT NULL,
     amount INT,
-    acquisition_price int,
-    now_price int,
-    theday_before int,
+    acquisition_price INT,
+    now_price INT,
+    theday_before INT,
     theday_before_ratio FLOAT,
     profit FLOAT,
     profit_ratio FLOAT,

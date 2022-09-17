@@ -9,6 +9,7 @@ import (
 )
 
 type DBRepository interface {
+	SaveRecords(records []model.DailyRecord) (err error)
 }
 
 type Usecase struct {
@@ -28,7 +29,7 @@ func (u *Usecase) RegistDailyRecords(ctx context.Context, rawStr string) (err er
 	}
 
 	fmt.Printf("%#v\n", fundInfos)
-
+	u.DBRepo.SaveRecords(fundInfos)
 	u.Logger.Info("register daily recorded")
 	return nil
 }
