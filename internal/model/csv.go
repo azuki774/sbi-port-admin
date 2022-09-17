@@ -10,7 +10,8 @@ const (
 	csvElementSize = 12 // CSVファイルの要素数
 )
 
-func NewCSVRecord(rawStr string) (records [][]string, err error) {
+func NewCSVRecord(rawStr string) (csvdata CSVData, err error) {
+	var records [][]string
 	rowRecord := strings.Split(rawStr, "\n")
 	for _, v := range rowRecord {
 		comRec := strings.Split(v, ",")
