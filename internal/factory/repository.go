@@ -4,7 +4,7 @@ import (
 	"net"
 	"time"
 
-	"azuki774/sbi-port-admin/internal/repository"
+	"azuki774/sbiport-server/internal/repository"
 
 	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
@@ -14,14 +14,45 @@ import (
 const DBConnectRetry = 5
 const DBConnectRetryInterval = 10
 
-func NewDBRepo(user string, password string, host string, port string, dbName string) (*repository.DBRepository, error) {
+type DBInfo struct {
+	Host     string
+	Port     string
+	DBName   string
+	UserName string
+	UserPass string
+}
+
+func setDefaultValue(opts *DBInfo) {
+	if opts.Host == "" {
+		opts.Host = "localhost"
+	}
+
+	if opts.Port == "" {
+		opts.Port = "3306"
+	}
+
+	if opts.DBName == "" {
+		opts.DBName = "sbiport"
+	}
+
+	if opts.UserName == "" {
+		opts.UserName = "root"
+	}
+
+	if opts.UserPass == "" {
+		opts.UserPass = "password"
+	}
+}
+
+func NewDBRepo(opts *DBInfo) (*repository.DBRepository, error) {
 	l, err := NewLogger()
 	if err != nil {
 		return nil, err
 	}
 
-	addr := net.JoinHostPort(host, port)
-	dsn := user + ":" + password + "@(" + addr + ")/" + dbName + "?parseTime=true&loc=Local"
+	setDefaultValue(opts)
+	addr := net.JoinHostPort(opts.Host, opts.Port)
+	dsn := opts.UserName + ":" + opts.UserPass + "@(" + addr + ")/" + opts.DBName + "?parseTime=true&loc=Local"
 	var gormdb *gorm.DB
 	for i := 0; i < DBConnectRetry; i++ {
 		gormdb, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})

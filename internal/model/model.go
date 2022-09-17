@@ -2,6 +2,8 @@ package model
 
 import "time"
 
+type CSVData [][]string
+
 type DailyRecord struct {
 	RecordDate        time.Time // 取り込み日付
 	FundName          string    // ファンド名
