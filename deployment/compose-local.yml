@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  sbi-port-db:
+    image: mariadb:10.7.3
+    restart: always
+    container_name: 
+    command:
+      - mysqld
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=sbiport
+      - MYSQL_ROOT_PASSWORD=password
+      - TZ=Asia/Tokyo
+    volumes:
+      - ../build/migration/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+  sbi-port-admin:
+    image: sbi-port-admin:latest
+    container_name: sbi-port-admin
+    environment:
+      - MYSQL_DATABASE=sbiport
