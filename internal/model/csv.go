@@ -15,7 +15,6 @@ func NewCSVRecord(rawStr string) (csvdata CSVData, err error) {
 	rowRecord := strings.Split(rawStr, "\n")
 	for _, v := range rowRecord {
 		comRec := strings.Split(v, ",")
-		fmt.Println(len(comRec))
 		if len(comRec) != csvElementSize {
 			// 空行をスキップする
 			continue
@@ -25,13 +24,13 @@ func NewCSVRecord(rawStr string) (csvdata CSVData, err error) {
 	return CSVData(records), nil
 }
 
-func (c *CSVData) FundsLoad(csvData CSVData) (fundsInfo []DailyRecord, err error) {
+func (c CSVData) FundsLoad() (fundsInfo []DailyRecord, err error) {
 	index := 0
-	for _, v := range csvData {
+	for _, v := range c {
 		if index != 0 {
 			// ラベル部分は取り込まない
 			var nowfundInfo DailyRecord
-			err := FundLoad(&nowfundInfo, v)
+			err := fundLoad(&nowfundInfo, v)
 			if err != nil {
 				return nil, fmt.Errorf("parse error: %w", err)
 			}
@@ -42,7 +41,7 @@ func (c *CSVData) FundsLoad(csvData CSVData) (fundsInfo []DailyRecord, err error
 	return fundsInfo, nil
 }
 
-func FundLoad(fundInfo *DailyRecord, rowData []string) (err error) {
+func fundLoad(fundInfo *DailyRecord, rowData []string) (err error) {
 	if len(rowData) != csvElementSize {
 		return fmt.Errorf("fundLoad parse error")
 	}

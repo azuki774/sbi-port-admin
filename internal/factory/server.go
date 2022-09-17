@@ -19,5 +19,5 @@ func NewServer(opts *ServerRunOption, u *usecase.Usecase) (*server.Server, error
 		opts.Port = "80" // default value
 	}
 
-	return &server.Server{Logger: l, Host: "", Port: opts.Port}, nil
+	return &server.Server{Logger: l, Host: "", Port: opts.Port, Usecase: u}, nil
 }

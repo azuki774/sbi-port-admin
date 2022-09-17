@@ -27,6 +27,7 @@ to quickly create a Cobra application.`,
 		defer dbRepo.CloseDB()
 
 		us, err := factory.NewUsecase(dbRepo)
+
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -36,7 +37,7 @@ to quickly create a Cobra application.`,
 			fmt.Println(err)
 			os.Exit(1)
 		}
-		
+
 		srv.Start()
 	},
 }

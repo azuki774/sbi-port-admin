@@ -25,8 +25,8 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) addRecordFunc(r *mux.Router) {
-	r.HandleFunc("/", rootHandler)
-	r.HandleFunc("/regist", registHandler).Methods("POST")
+	r.HandleFunc("/", s.rootHandler)
+	r.HandleFunc("/regist", s.registHandler).Methods("POST")
 	r.Use(s.middlewareLogging)
 }
 
