@@ -1,5 +1,4 @@
 CREATE TABLE daily_records (
-    id INT AUTO_INCREMENT,
     record_date DATE NOT NULL,
     fund_name VARCHAR(255) NOT NULL,
     amount INT,
@@ -10,7 +9,7 @@ CREATE TABLE daily_records (
     profit FLOAT,
     profit_ratio FLOAT,
     valuation FLOAT,
-    PRIMARY KEY (id),
+    PRIMARY KEY (record_date, fund_name),
     UNIQUE idx_df (fund_name, record_date),
     INDEX idx_d (record_date),
     INDEX idx_n (fund_name)

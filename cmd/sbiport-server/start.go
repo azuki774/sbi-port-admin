@@ -8,6 +8,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var DBInfo factory.DBInfo
+
 // loadCmd represents the load command
 var startCmd = &cobra.Command{
 	Use:   "start",
@@ -19,7 +21,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		dbRepo, err := factory.NewDBRepo(&factory.DBInfo{})
+		dbRepo, err := factory.NewDBRepo(&DBInfo)
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -45,13 +47,9 @@ to quickly create a Cobra application.`,
 func init() {
 	rootCmd.AddCommand(startCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// loadCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// loadCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	startCmd.Flags().StringVar(&DBInfo.Host, "db-host", "", "DB Host")
+	startCmd.Flags().StringVar(&DBInfo.Port, "db-port", "", "DB Port")
+	startCmd.Flags().StringVar(&DBInfo.DBName, "db-name", "", "DB Name")
+	startCmd.Flags().StringVar(&DBInfo.UserName, "db-user", "", "DB User")
+	startCmd.Flags().StringVar(&DBInfo.UserPass, "db-pass", "", "DB Pass")
 }
