@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -20,6 +21,21 @@ func (s *Server) registHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	s.Usecase.RegistDailyRecords(context.Background(), string(body))
-	fmt.Fprintf(w, "OK")
+
+	result, err := s.Usecase.RegistDailyRecords(context.Background(), string(body))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "internal error: %v\n", err)
+		return
+	}
+
+	outputJson, err := json.Marshal(&result)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "internal error: %v\n", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(outputJson))
 }

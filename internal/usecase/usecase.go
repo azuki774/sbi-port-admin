@@ -3,7 +3,6 @@ package usecase
 import (
 	"azuki774/sbiport-server/internal/model"
 	"context"
-	"fmt"
 
 	"go.uber.org/zap"
 )
@@ -17,19 +16,23 @@ type Usecase struct {
 	DBRepo DBRepository
 }
 
-func (u *Usecase) RegistDailyRecords(ctx context.Context, rawStr string) (err error) {
+func (u *Usecase) RegistDailyRecords(ctx context.Context, rawStr string) (result model.CreateRecordResult, err error) {
 	csvData, err := model.NewCSVRecord(rawStr)
 	if err != nil {
-		return err
+		u.Logger.Error("failed to parse CSV file", zap.Error(err))
+		return model.CreateRecordResult{}, err
 	}
 
 	fundInfos, err := csvData.FundsLoad()
 	if err != nil {
-		return err
+		u.Logger.Error("failed to load fund Information", zap.Error(err))
+		return model.CreateRecordResult{}, err
 	}
 
-	fmt.Printf("%#v\n", fundInfos)
-	u.DBRepo.SaveRecords(ctx, fundInfos, false)
-	u.Logger.Info("register daily recorded")
-	return nil
+	result, err = u.DBRepo.SaveRecords(ctx, fundInfos, false)
+	if err != nil {
+		u.Logger.Error("failed to save records", zap.Error(err))
+	}
+	u.Logger.Info("register daily record")
+	return result, nil
 }
