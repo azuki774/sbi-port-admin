@@ -13,6 +13,14 @@ import (
 	"gorm.io/gorm"
 )
 
+func init() {
+	jst, err := time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		panic(err)
+	}
+	time.Local = jst
+}
+
 func NewDBMock() (*gorm.DB, sqlmock.Sqlmock, error) {
 	mockDB, mock, err := sqlmock.New()
 
@@ -132,7 +140,7 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 					Amount:     100,
 					Valuation:  123.45,
 				}},
-				update: false,
+				update: true,
 			},
 			wantResult: model.CreateRecordResult{
 				UpdatedNumber: 1,
@@ -142,6 +150,10 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `daily_records` WHERE `daily_records`.`record_date` = ? AND `daily_records`.`fund_name` = ? ORDER BY `daily_records`.`record_date` LIMIT 1")).
 					WithArgs(time.Date(2021, 1, 4, 0, 0, 0, 0, time.Local), "BBB").
 					WillReturnRows(sqlmock.NewRows([]string{"record_date", "fund_name"}).AddRow(time.Date(2021, 1, 4, 0, 0, 0, 0, time.Local), "BBB"))
+				mock.ExpectBegin()
+				mock.ExpectExec(regexp.QuoteMeta("UPDATE `daily_records` SET `amount`=?,`valuation`=? WHERE `record_date` = ? AND `fund_name` = ?")).WithArgs(100, 123.45, time.Date(2021, 1, 4, 0, 0, 0, 0, time.Local), "BBB").
+					WillReturnResult(sqlmock.NewResult(103, 1))
+				mock.ExpectCommit()
 			},
 		},
 		{
