@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
 	csvElementSize = 12 // CSVファイルの要素数
 )
 
-func NewCSVRecord(rawStr string) (csvdata CSVData, err error) {
+func NewCSVRecord(rawStr string, t time.Time) (csvdata CSVData, err error) {
 	var records [][]string
 	rowRecord := strings.Split(rawStr, "\n")
 	for _, v := range rowRecord {
@@ -21,15 +22,15 @@ func NewCSVRecord(rawStr string) (csvdata CSVData, err error) {
 		}
 		records = append(records, comRec)
 	}
-	return CSVData(records), nil
+	return CSVData{Fields: records, Date: t}, nil
 }
 
 func (c CSVData) FundsLoad() (fundsInfo []DailyRecord, err error) {
 	index := 0
-	for _, v := range c {
+	for _, v := range c.Fields {
 		if index != 0 {
 			// ラベル部分は取り込まない
-			var nowfundInfo DailyRecord
+			nowfundInfo := DailyRecord{RecordDate: c.Date}
 			err := fundLoad(&nowfundInfo, v)
 			if err != nil {
 				return nil, fmt.Errorf("parse error: %w", err)

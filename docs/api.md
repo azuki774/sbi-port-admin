@@ -1,7 +1,7 @@
 ## GET /
 - healthCheck 用
 
-## POST /regist/
+## POST /regist/{YYYYMMDD}
 - データを追加する。
 ### request:
 - request body 部分

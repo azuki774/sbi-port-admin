@@ -6,7 +6,7 @@ CONTAINER_NAME_SERVER:=sbiport-server
 .PHONY: build start stop test restart
 
 build:
-	CGO_ENABLED=0 go build -a -tags "netgo" -installsuffix netgo  -ldflags="-s -w -extldflags \"-static\"" -o build/bin/ ./...
+	go build -a -tags "netgo" -installsuffix netgo  -ldflags="-s -w -extldflags \"-static\"" -o build/bin/ ./...
 	docker build -t ${CONTAINER_NAME_SERVER} -f build/Dockerfile-sbiport-server .
 
 start:

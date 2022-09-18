@@ -2,7 +2,10 @@ package model
 
 import "time"
 
-type CSVData [][]string
+type CSVData struct {
+	Fields [][]string
+	Date   time.Time
+}
 
 type DailyRecord struct {
 	RecordDate        time.Time `gorm:"primaryKey"` // 取り込み日付
