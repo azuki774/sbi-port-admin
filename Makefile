@@ -21,3 +21,8 @@ test:
 restart:
 	make stop
 	make start
+
+migration-test:
+	make restart
+	sleep 15s
+	python3 test/check.py
