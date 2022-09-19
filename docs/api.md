@@ -1,6 +1,45 @@
 ## GET /
 - healthCheck 用
 
+## GET /daily/{YYYYMMDD}
+- daily 単位で登録済のデータを取得する
+
+### request:
+- パスパラメータで日付を `YYYYMMDD` 指定する
+
+### response:
+-
+```
+[
+    {
+        RecordDate    : "20060102", 
+        FundName      : "AAA",
+        Amount        : 47917,
+        AcquisitionPrice  : 12796,
+        NowPrice          : 12796,
+        ThedayBefore      : -284,
+        ThedayBeforeRatio : -2.16,
+        Profit            : 326.03,
+        ProfitRatio       : 0.53,
+        Valuation         : 61679.02
+    },
+    {
+        RecordDate    : "20060102", 
+        FundName      : "BBB",
+        Amount        : 47917,
+        AcquisitionPrice  : 12796,
+        NowPrice          : 12796,
+        ThedayBefore      : -284,
+        ThedayBeforeRatio : -2.16,
+        Profit            : 326.03,
+        ProfitRatio       : 0.53,
+        Valuation         : 61679.02
+    }
+]
+```
+
+
+
 ## POST /regist/{YYYYMMDD}
 - データを追加する。
 ### request:
