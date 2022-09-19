@@ -205,3 +205,80 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 		})
 	}
 }
+
+func TestDBRepository_GetDailyRecords(t *testing.T) {
+	type fields struct {
+		Conn *gorm.DB
+	}
+	type args struct {
+		ctx  context.Context
+		date string
+	}
+	tests := []struct {
+		name            string
+		fields          fields
+		args            args
+		wantRecordsRepl []model.DailyRecordRepl
+		wantErr         bool
+		before          func(mock sqlmock.Sqlmock)
+	}{
+		{
+			name: "2 records",
+			args: args{
+				ctx:  context.Background(),
+				date: "20060102",
+			},
+			wantRecordsRepl: []model.DailyRecordRepl{
+				{
+					RecordDate:        "20060102",
+					FundName:          "AAA",
+					Amount:            26231,
+					AcquisitionPrice:  13000,
+					NowPrice:          11403,
+					ThedayBefore:      -258,
+					ThedayBeforeRatio: -2.21,
+					Profit:            -4189.09,
+					ProfitRatio:       -12.28,
+					Valuation:         29911.2,
+				},
+				{
+					RecordDate:        "20060102",
+					FundName:          "BBB",
+					Amount:            26231,
+					AcquisitionPrice:  13000,
+					NowPrice:          11403,
+					ThedayBefore:      -258,
+					ThedayBeforeRatio: -2.21,
+					Profit:            -4189.09,
+					ProfitRatio:       -12.28,
+					Valuation:         29911.2,
+				},
+			},
+			wantErr: false,
+			before: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `daily_records` WHERE record_date = ?")).
+					WithArgs("20060102").
+					WillReturnRows(sqlmock.NewRows([]string{"record_date", "fund_name", "amount", "acquisition_price", "now_price", "theday_before", "theday_before_ratio", "profit", "profit_ratio", "valuation"}).
+						AddRow(time.Date(2006, 1, 2, 0, 0, 0, 0, time.Local), "AAA", 26231, 13000, 11403, -258, -2.21, -4189.09, -12.28, 29911.2).
+						AddRow(time.Date(2006, 1, 2, 0, 0, 0, 0, time.Local), "BBB", 26231, 13000, 11403, -258, -2.21, -4189.09, -12.28, 29911.2))
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			db, mock, _ := NewDBMock()
+			tt.before(mock)
+			dbR := &DBRepository{
+				Conn: db,
+			}
+			gotRecordsRepl, err := dbR.GetDailyRecords(tt.args.ctx, tt.args.date)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DBRepository.GetDailyRecords() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(gotRecordsRepl, tt.wantRecordsRepl) {
+				t.Errorf("DBRepository.GetDailyRecords() = %#+v, want %#+v", gotRecordsRepl, tt.wantRecordsRepl)
+			}
+		})
+	}
+}

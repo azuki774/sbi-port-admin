@@ -11,6 +11,11 @@ const (
 	csvElementSize = 12 // CSVファイルの要素数
 )
 
+type CSVData struct {
+	Fields [][]string
+	Date   time.Time
+}
+
 func NewCSVRecord(rawStr string, t time.Time) (csvdata CSVData, err error) {
 	var records [][]string
 	rowRecord := strings.Split(rawStr, "\n")

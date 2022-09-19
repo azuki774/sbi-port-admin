@@ -58,3 +58,32 @@ func (s *Server) registHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, string(outputJson))
 }
+
+func (s *Server) getDailyHandler(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+	pathParam := mux.Vars(r)
+	date := pathParam["date"]
+
+	results, err := s.Usecase.GetDailyRecords(context.Background(), date)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "internal error: %v\n", err)
+		return
+	}
+
+	if len(results) == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprint(w, "record is not regisited")
+		return
+	}
+
+	outputJson, err := json.Marshal(&results)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "internal error: %v\n", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(outputJson))
+}

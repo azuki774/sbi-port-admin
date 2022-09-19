@@ -13,6 +13,7 @@ def main():
     res = requests.get(url)
     if res.status_code != 200:
         print("1-1. health check failed")
+        print(res.status_code)
         sys.exit(1)
     print("1-1. health check ok")
 
@@ -38,5 +39,23 @@ def main():
             sys.exit(1)
     print("2-2. regist already exists ok")
     
+    # 3-1 get daily record
+    url = "http://localhost:8080/daily/20060102"
+    res = requests.get(url)
+    if res.status_code != 200:
+        print("3-1. get daily record failed")
+        print(res.status_code)
+        sys.exit(1)
+    print("3-1. get daily record ok")
+
+    # 3-2 get daily record not found
+    url = "http://localhost:8080/daily/19990102"
+    res = requests.get(url)
+    if res.status_code != 404:
+        print("3-2. get daily record not found failed")
+        print(res.status_code)
+        sys.exit(1)
+    print("3-2. get daily record not found ok")
+
 if __name__ == "__main__":
     main()

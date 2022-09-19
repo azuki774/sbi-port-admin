@@ -62,3 +62,18 @@ func (dbR *DBRepository) SaveRecords(ctx context.Context, records []model.DailyR
 
 	return result, nil
 }
+
+func (dbR *DBRepository) GetDailyRecords(ctx context.Context, date string) (recordsRepl []model.DailyRecordRepl, err error) {
+	var records []model.DailyRecord
+	err = dbR.Conn.WithContext(ctx).Where("record_date = ?", date).Find(&records).Error
+	if err != nil {
+		return []model.DailyRecordRepl{}, fmt.Errorf("failed to SELECT error: %w", err)
+	}
+
+	for _, v := range records {
+		recordRepl := model.NewDailyRecordRepl(v)
+		recordsRepl = append(recordsRepl, recordRepl)
+	}
+
+	return recordsRepl, nil
+}

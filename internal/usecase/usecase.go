@@ -10,6 +10,7 @@ import (
 
 type DBRepository interface {
 	SaveRecords(ctx context.Context, records []model.DailyRecord, update bool) (result model.CreateRecordResult, err error)
+	GetDailyRecords(ctx context.Context, date string) (recordsRepl []model.DailyRecordRepl, err error)
 }
 
 type Usecase struct {
@@ -36,4 +37,15 @@ func (u *Usecase) RegistDailyRecords(ctx context.Context, rawStr string, t time.
 	}
 	u.Logger.Info("register daily record")
 	return result, nil
+}
+
+func (u *Usecase) GetDailyRecords(ctx context.Context, date string) ([]model.DailyRecordRepl, error) {
+	// TODO: validation
+
+	recordsRepl, err := u.DBRepo.GetDailyRecords(ctx, date)
+	if err != nil {
+		u.Logger.Error("failed to get records", zap.Error(err))
+	}
+
+	return recordsRepl, nil
 }
