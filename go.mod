@@ -3,6 +3,7 @@ module azuki774/sbiport-server
 go 1.18
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.0
 	github.com/gorilla/mux v1.8.0
 	github.com/spf13/cobra v1.5.0
 	go.uber.org/zap v1.23.0

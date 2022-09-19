@@ -11,9 +11,9 @@ import (
 )
 
 type Server struct {
-	Host   string
-	Port   string
-	Logger *zap.Logger
+	Host    string
+	Port    string
+	Logger  *zap.Logger
 	Usecase *usecase.Usecase
 }
 
@@ -26,7 +26,7 @@ func (s *Server) Start() error {
 
 func (s *Server) addRecordFunc(r *mux.Router) {
 	r.HandleFunc("/", s.rootHandler)
-	r.HandleFunc("/regist", s.registHandler).Methods("POST")
+	r.HandleFunc("/regist/{date}", s.registHandler).Methods("POST")
 	r.Use(s.middlewareLogging)
 }
 

@@ -4,7 +4,7 @@ services:
   sbiport-db:
     image: mariadb:10.7.3
     restart: always
-    container_name:  sbiport-db
+    container_name: sbiport-db
     command:
       - mysqld
       - --character-set-server=utf8mb4
@@ -20,5 +20,10 @@ services:
   sbiport-server:
     image: sbiport-server:latest
     container_name: sbiport-server
+    ports:
+      - "8080:80"
     environment:
       - MYSQL_DATABASE=sbiport
+    command:
+      - "--db-host"
+      - "sbiport-db"
