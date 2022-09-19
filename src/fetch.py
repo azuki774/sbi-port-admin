@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 
 SBI_USER = os.getenv("sbi_user")
 SBI_PASS = os.getenv("sbi_pass")
-CSV_DIR = "/csv/"
+CSV_DIR = os.getenv("csv_dir", '/csv/')
 LOGIN_URL = "https://site1.sbisec.co.jp/ETGate/"
 PORT_URL = "https://site1.sbisec.co.jp/ETGate/?_ControlID=WPLETpfR001Control&_PageID=DefaultPID&_DataStoreID=DSWPLETpfR001Control&_ActionID=DefaultAID&getFlg=on"
 
@@ -37,7 +37,7 @@ def createCSV(table_data):
 
 # 作成した文字列データ(CSV)を指定場所に書き込み
 def writeCSV(rawoutputCSV):
-    filename = str(datetime.date.today()) + '.csv'
+    filename = datetime.date.today().strftime('%Y%m%d') + '.csv'
     outputCSV = reshapeCSV(rawoutputCSV)
     with open(CSV_DIR + filename, mode='w') as f:
         f.write(outputCSV)
@@ -51,6 +51,8 @@ def reshapeCSV(rawoutputCSV):
 
 if __name__ == '__main__':
     print('Program start')
+
+    print('output dir: ' + CSV_DIR)
 
     # ブラウザ起動
     driver = driver.get_driver()
