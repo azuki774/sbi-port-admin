@@ -40,7 +40,11 @@ func (u *Usecase) RegistDailyRecords(ctx context.Context, rawStr string, t time.
 }
 
 func (u *Usecase) GetDailyRecords(ctx context.Context, date string) ([]model.DailyRecordRepl, error) {
-	// TODO: validation
+	// validation
+	err := model.ValidateDate(date)
+	if err != nil {
+		return []model.DailyRecordRepl{}, ErrInvalidDate
+	}
 
 	recordsRepl, err := u.DBRepo.GetDailyRecords(ctx, date)
 	if err != nil {

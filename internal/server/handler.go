@@ -1,8 +1,10 @@
 package server
 
 import (
+	"azuki774/sbiport-server/internal/usecase"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -66,8 +68,13 @@ func (s *Server) getDailyHandler(w http.ResponseWriter, r *http.Request) {
 
 	results, err := s.Usecase.GetDailyRecords(context.Background(), date)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprintf(w, "internal error: %v\n", err)
+		if errors.Is(err, usecase.ErrInvalidDate) {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, "bad request: %v\n", err)
+		} else {
+			w.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprintf(w, "internal error: %v\n", err)
+		}
 		return
 	}
 

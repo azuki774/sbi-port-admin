@@ -57,5 +57,15 @@ def main():
         sys.exit(1)
     print("3-2. get daily record not found ok")
 
+    # 3-3 get daily record bad request
+    url = "http://localhost:8080/daily/1999-01-01"
+    res = requests.get(url)
+    if res.status_code != 400:
+        print("3-3. get daily record bad request failed")
+        print(res.status_code)
+        sys.exit(1)
+    print("3-3. get daily record bad request ok")
+
+
 if __name__ == "__main__":
     main()
