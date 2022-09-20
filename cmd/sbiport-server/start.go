@@ -21,6 +21,8 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
+		setInfoFromEnv(&DBInfo)
+
 		dbRepo, err := factory.NewDBRepo(&DBInfo)
 		if err != nil {
 			fmt.Println(err)
@@ -51,5 +53,12 @@ func init() {
 	startCmd.Flags().StringVar(&DBInfo.Port, "db-port", "", "DB Port")
 	startCmd.Flags().StringVar(&DBInfo.DBName, "db-name", "", "DB Name")
 	startCmd.Flags().StringVar(&DBInfo.UserName, "db-user", "", "DB User")
-	startCmd.Flags().StringVar(&DBInfo.UserPass, "db-pass", "", "DB Pass")
+	startCmd.Flags().StringVar(&DBInfo.UserPass, "db-pass", "", "DB Pass") // is overwrited by ENV
+}
+
+func setInfoFromEnv(dbInfo *factory.DBInfo) {
+	dbpass, ok := os.LookupEnv("DB_PASS")
+	if ok {
+		dbInfo.UserPass = dbpass
+	}
 }
