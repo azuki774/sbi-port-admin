@@ -57,6 +57,6 @@ func init() {
 	rootCmd.AddCommand(registCmd)
 
 	registCmd.Flags().StringVar(&HTTPClientInfo.Scheme, "scheme", "", "http or https")
-	registCmd.Flags().StringVar(&HTTPClientInfo.Host, "host", "", "host")
-	registCmd.Flags().StringVar(&HTTPClientInfo.Port, "port", "", "port")
+	registCmd.Flags().StringVar(&HTTPClientInfo.Host, "host", "", "server host")
+	registCmd.Flags().StringVar(&HTTPClientInfo.Port, "port", "", "server port")
 }
