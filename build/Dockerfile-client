@@ -1,5 +1,5 @@
 FROM alpine:latest
-ADD build/bin/sbiport-server /usr/local/bin/sbiport-server
+ADD build/bin/sbiport-client /usr/local/bin/sbiport-client
 RUN apk --no-cache add tzdata && \
     cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 ENTRYPOINT ["/usr/local/bin/sbiport-client"]
