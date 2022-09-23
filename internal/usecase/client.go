@@ -65,6 +65,7 @@ func (r *RegistFileInformation) FillDateByFileName() (err error) {
 func (u *UsecaseClient) RegistJob(ctx context.Context, filePath string) (err error) {
 	var reg RegistFileInformation
 	reg.FilePath = filePath
+	u.Logger.Info("process file", zap.String("filename", filePath))
 
 	err = reg.FillDateByFileName()
 	if err != nil {
@@ -91,5 +92,6 @@ func (u *UsecaseClient) RegistJob(ctx context.Context, filePath string) (err err
 	}
 
 	u.Logger.Info("response from server", zap.String("body", string(resBody)))
+	u.Logger.Info("regist CSV file", zap.String("filename", filePath))
 	return nil
 }
