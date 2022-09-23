@@ -52,4 +52,3 @@ func NewDailyRecordRepl(d DailyRecord) DailyRecordRepl {
 	dRel.RecordDate = d.RecordDate.Local().Format("20060102")
 	return dRel
 }
-

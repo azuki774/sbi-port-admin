@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"reflect"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -31,7 +32,7 @@ func TestClient_PostFile(t *testing.T) {
 		name           string
 		fields         fields
 		args           args
-		wantResBody    string
+		wantResBody    []byte
 		wantStatusCode int
 		wantErr        bool
 	}{
@@ -39,7 +40,7 @@ func TestClient_PostFile(t *testing.T) {
 			name:           "ok",
 			fields:         fields{Scheme: "http", Host: "example.com", Port: "80"},
 			args:           args{ctx: context.Background(), endPoint: "/regist/20060102", filePath: "../../test/20060102.csv"},
-			wantResBody:    `{"created_number":5}`,
+			wantResBody:    []byte(`{"created_number":5}`),
 			wantStatusCode: 200,
 			wantErr:        false,
 		},
@@ -56,7 +57,7 @@ func TestClient_PostFile(t *testing.T) {
 				t.Errorf("Client.PostFile() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if gotResBody != tt.wantResBody {
+			if !reflect.DeepEqual(gotResBody, tt.wantResBody) {
 				t.Errorf("Client.PostFile() gotResBody = %v, want %v", gotResBody, tt.wantResBody)
 			}
 			if gotStatusCode != tt.wantStatusCode {
