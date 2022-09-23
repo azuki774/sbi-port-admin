@@ -22,6 +22,16 @@ type DBInfo struct {
 	UserPass string
 }
 
+type HTTPClientInfo struct {
+	Scheme string // http or https
+	Host   string
+	Port   string
+}
+
+type RegistInfo struct {
+	TargetDir string
+}
+
 func setDefaultValue(opts *DBInfo) {
 	if opts.Host == "" {
 		opts.Host = "localhost"
@@ -41,6 +51,18 @@ func setDefaultValue(opts *DBInfo) {
 
 	if opts.UserPass == "" {
 		opts.UserPass = "password"
+	}
+}
+
+func setDefaultValueHTTPClient(opts *HTTPClientInfo) {
+	if opts.Scheme == "" {
+		opts.Scheme = "http"
+	}
+	if opts.Host == "" {
+		opts.Host = "localhost"
+	}
+	if opts.Port == "" {
+		opts.Port = "80"
 	}
 }
 
@@ -72,4 +94,9 @@ func NewDBRepo(opts *DBInfo) (*repository.DBRepository, error) {
 	}
 
 	return &repository.DBRepository{Conn: gormdb}, nil
+}
+
+func NewHTTPClient(opts *HTTPClientInfo) *repository.Client {
+	setDefaultValueHTTPClient(opts)
+	return &repository.Client{Scheme: opts.Scheme, Host: opts.Host, Port: opts.Port}
 }
