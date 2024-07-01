@@ -1,3 +1,0 @@
-FROM ghcr.io/azuki774/selenium-chrome:0.1.0
-LABEL description="sbiport-fetcher"
-ADD src/fetch.py /src/main.py
