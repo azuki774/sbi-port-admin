@@ -1,7 +1,7 @@
 ## GET /
 - healthCheck 用
 
-## GET /daily/{YYYYMMDD}
+## GET /daily/<category_tag>/{YYYYMMDD}
 - daily 単位で登録済のデータを取得する
 
 ### request:
@@ -40,7 +40,7 @@
 
 
 
-## POST /regist/{YYYYMMDD}
+## POST /regist/<category_tag>/{YYYYMMDD}
 - データを追加する。
 ### request:
 - request body 部分

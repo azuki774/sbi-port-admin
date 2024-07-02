@@ -14,3 +14,16 @@ CREATE TABLE daily_records (
     INDEX idx_d (record_date),
     INDEX idx_n (fund_name)
 );
+
+-- Migration v2
+
+-- category_tag_master -> table_name の変換を行うマスタ
+CREATE TABLE category_tag_master (
+    category_tag_name VARCHAR(255) NOT NULL,
+    table_name VARCHAR(255) NOT NULL,
+    PRIMARY KEY (category_tag_name)
+);
+
+INSERT INTO `category_tag_master` (`category_tag_name`, `table_name`) VALUES
+('nisa', 'daily_records');
+
