@@ -16,6 +16,11 @@ type DailyRecord struct {
 	Valuation         float64   // 評価額 61679.02
 }
 
+type CategoryTagMaster struct {
+	CategoryTagName string
+	TableName       string
+}
+
 type CreateRecordResult struct {
 	CreatedNumber int `json:"created_number,omitempty"`
 	UpdatedNumber int `json:"updated_number,omitempty"`

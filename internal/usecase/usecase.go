@@ -9,8 +9,8 @@ import (
 )
 
 type DBRepository interface {
-	SaveRecords(ctx context.Context, records []model.DailyRecord, update bool) (result model.CreateRecordResult, err error)
-	GetDailyRecords(ctx context.Context, date string) (recordsRepl []model.DailyRecordRepl, err error)
+	SaveRecords(ctx context.Context, records []model.DailyRecord, categoryTag string, update bool) (result model.CreateRecordResult, err error)
+	GetDailyRecords(ctx context.Context, date string, categoryTag string) (recordsRepl []model.DailyRecordRepl, err error)
 }
 
 type Usecase struct {
@@ -18,7 +18,7 @@ type Usecase struct {
 	DBRepo DBRepository
 }
 
-func (u *Usecase) RegistDailyRecords(ctx context.Context, rawStr string, t time.Time) (result model.CreateRecordResult, err error) {
+func (u *Usecase) RegistDailyRecords(ctx context.Context, rawStr string, t time.Time, categoryTag string) (result model.CreateRecordResult, err error) {
 	csvData, err := model.NewCSVRecord(rawStr, t)
 	if err != nil {
 		u.Logger.Error("failed to parse CSV file", zap.Error(err))
@@ -31,7 +31,7 @@ func (u *Usecase) RegistDailyRecords(ctx context.Context, rawStr string, t time.
 		return model.CreateRecordResult{}, err
 	}
 
-	result, err = u.DBRepo.SaveRecords(ctx, fundInfos, false)
+	result, err = u.DBRepo.SaveRecords(ctx, fundInfos, categoryTag, false)
 	if err != nil {
 		u.Logger.Error("failed to save records", zap.Error(err))
 	}
@@ -39,14 +39,14 @@ func (u *Usecase) RegistDailyRecords(ctx context.Context, rawStr string, t time.
 	return result, nil
 }
 
-func (u *Usecase) GetDailyRecords(ctx context.Context, date string) ([]model.DailyRecordRepl, error) {
+func (u *Usecase) GetDailyRecords(ctx context.Context, date string, categoryTag string) ([]model.DailyRecordRepl, error) {
 	// validation
 	err := model.ValidateDate(date)
 	if err != nil {
 		return []model.DailyRecordRepl{}, ErrInvalidDate
 	}
 
-	recordsRepl, err := u.DBRepo.GetDailyRecords(ctx, date)
+	recordsRepl, err := u.DBRepo.GetDailyRecords(ctx, date, categoryTag)
 	if err != nil {
 		u.Logger.Error("failed to get records", zap.Error(err))
 	}
