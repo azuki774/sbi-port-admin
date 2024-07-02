@@ -28,6 +28,8 @@ func (s *Server) rootHandler(w http.ResponseWriter, r *http.Request) {
 func (s *Server) registHandler(w http.ResponseWriter, r *http.Request) {
 	pathParam := mux.Vars(r)
 	date := pathParam["date"]
+	categoryTag := pathParam["categoryTag"]
+
 	t, err := time.ParseInLocation("20060102", date, time.Local)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -43,7 +45,7 @@ func (s *Server) registHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	result, err := s.Usecase.RegistDailyRecords(context.Background(), string(body), t)
+	result, err := s.Usecase.RegistDailyRecords(context.Background(), string(body), t, categoryTag)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "internal error: %v\n", err)
@@ -65,8 +67,9 @@ func (s *Server) getDailyHandler(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	pathParam := mux.Vars(r)
 	date := pathParam["date"]
+	categoryTag := pathParam["categoryTag"]
 
-	results, err := s.Usecase.GetDailyRecords(context.Background(), date)
+	results, err := s.Usecase.GetDailyRecords(context.Background(), date, categoryTag)
 	if err != nil {
 		if errors.Is(err, usecase.ErrInvalidDate) {
 			w.WriteHeader(http.StatusBadRequest)

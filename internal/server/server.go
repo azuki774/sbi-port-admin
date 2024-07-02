@@ -26,8 +26,8 @@ func (s *Server) Start() error {
 
 func (s *Server) addRecordFunc(r *mux.Router) {
 	r.HandleFunc("/", s.rootHandler)
-	r.HandleFunc("/regist/{date}", s.registHandler).Methods("POST")
-	r.HandleFunc("/daily/{date}", s.getDailyHandler).Methods("GET")
+	r.HandleFunc("/regist/{categoryTag}/{date}", s.registHandler).Methods("POST")
+	r.HandleFunc("/daily/{categoryTag}/{date}", s.getDailyHandler).Methods("GET")
 	r.Use(s.middlewareLogging)
 }
 
