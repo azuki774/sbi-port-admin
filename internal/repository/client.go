@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -33,7 +33,7 @@ func (c *Client) PostFile(ctx context.Context, endPoint string, filePath string)
 	}
 	defer res.Body.Close()
 
-	resBody, err = ioutil.ReadAll(res.Body)
+	resBody, err = io.ReadAll(res.Body)
 	if err != nil {
 		return []byte{}, 0, err
 	}
