@@ -9,6 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const categoryTagMasterName = "category_tag_master"
+
 type DBRepository struct {
 	Conn *gorm.DB
 }
@@ -21,10 +23,18 @@ func (dbR *DBRepository) CloseDB() (err error) {
 	return sqlDB.Close()
 }
 
-func (dbR *DBRepository) SaveRecords(ctx context.Context, records []model.DailyRecord, update bool) (result model.CreateRecordResult, err error) {
+func (dbR *DBRepository) SaveRecords(ctx context.Context, records []model.DailyRecord, categoryTag string, update bool) (result model.CreateRecordResult, err error) {
+	// categoryTag から 挿入すべきテーブル名を取得する
+	var categoryMaster model.CategoryTagMaster
+	err = dbR.Conn.Table(categoryTagMasterName).WithContext(ctx).Where("category_tag_name = ?", categoryTag).First(&categoryMaster).Error
+	if err != nil {
+		return model.CreateRecordResult{}, err
+	}
+	tableName := categoryMaster.TableName
+
 	for _, record := range records {
 		exists := false
-		err = dbR.Conn.WithContext(ctx).First(&record).Error
+		err = dbR.Conn.Table(tableName).WithContext(ctx).First(&record).Error
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			// Not Found
 		} else if err == nil {
@@ -39,7 +49,7 @@ func (dbR *DBRepository) SaveRecords(ctx context.Context, records []model.DailyR
 		if exists {
 			if update {
 				// update
-				err = dbR.Conn.WithContext(ctx).Updates(&record).Error
+				err = dbR.Conn.Table(tableName).WithContext(ctx).Updates(&record).Error
 				if err != nil {
 					result.FailedNumber = result.FailedNumber + 1
 					return result, err
@@ -51,7 +61,7 @@ func (dbR *DBRepository) SaveRecords(ctx context.Context, records []model.DailyR
 			}
 		} else {
 			// create new data
-			err = dbR.Conn.WithContext(ctx).Create(&record).Error
+			err = dbR.Conn.Table(tableName).WithContext(ctx).Create(&record).Error
 			if err != nil {
 				result.FailedNumber = result.FailedNumber + 1
 				return result, err
@@ -63,7 +73,7 @@ func (dbR *DBRepository) SaveRecords(ctx context.Context, records []model.DailyR
 	return result, nil
 }
 
-func (dbR *DBRepository) GetDailyRecords(ctx context.Context, date string) (recordsRepl []model.DailyRecordRepl, err error) {
+func (dbR *DBRepository) GetDailyRecords(ctx context.Context, date string, categoryTag string) (recordsRepl []model.DailyRecordRepl, err error) {
 	var records []model.DailyRecord
 	err = dbR.Conn.WithContext(ctx).Where("record_date = ?", date).Find(&records).Error
 	if err != nil {

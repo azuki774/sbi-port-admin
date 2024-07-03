@@ -44,9 +44,10 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 		Conn *gorm.DB
 	}
 	type args struct {
-		ctx     context.Context
-		records []model.DailyRecord
-		update  bool
+		ctx         context.Context
+		records     []model.DailyRecord
+		categoryTag string
+		update      bool
 	}
 	tests := []struct {
 		name       string
@@ -66,13 +67,17 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 					Amount:     100,
 					Valuation:  123.45,
 				}},
-				update: false,
+				categoryTag: "categoryTagName",
+				update:      false,
 			},
 			wantResult: model.CreateRecordResult{
 				CreatedNumber: 1,
 			},
 			wantErr: false,
 			before: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `category_tag_master` WHERE category_tag_name = ? ORDER BY `category_tag_master`.`category_tag_name` LIMIT 1")).
+					WithArgs("categoryTagName").
+					WillReturnRows(sqlmock.NewRows([]string{"category_tag_name", "table_name"}).AddRow("categoryTagName", "daily_records"))
 				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `daily_records` WHERE `daily_records`.`record_date` = ? AND `daily_records`.`fund_name` = ? ORDER BY `daily_records`.`record_date` LIMIT 1")).
 					WithArgs(time.Date(2021, 1, 1, 0, 0, 0, 0, time.Local), "AAA").WillReturnError(gorm.ErrRecordNotFound)
 
@@ -92,13 +97,17 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 					Amount:     100,
 					Valuation:  123.45,
 				}},
-				update: false,
+				categoryTag: "categoryTagName",
+				update:      false,
 			},
 			wantResult: model.CreateRecordResult{
 				SkippedNumber: 1,
 			},
 			wantErr: false,
 			before: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `category_tag_master` WHERE category_tag_name = ? ORDER BY `category_tag_master`.`category_tag_name` LIMIT 1")).
+					WithArgs("categoryTagName").
+					WillReturnRows(sqlmock.NewRows([]string{"category_tag_name", "table_name"}).AddRow("categoryTagName", "daily_records"))
 				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `daily_records` WHERE `daily_records`.`record_date` = ? AND `daily_records`.`fund_name` = ? ORDER BY `daily_records`.`record_date` LIMIT 1")).
 					WithArgs(time.Date(2021, 1, 2, 0, 0, 0, 0, time.Local), "BBB").
 					WillReturnRows(sqlmock.NewRows([]string{"record_date", "fund_name"}).AddRow(time.Date(2021, 1, 2, 0, 0, 0, 0, time.Local), "BBB"))
@@ -114,13 +123,17 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 					Amount:     100,
 					Valuation:  123.45,
 				}},
-				update: true,
+				categoryTag: "categoryTagName",
+				update:      true,
 			},
 			wantResult: model.CreateRecordResult{
 				CreatedNumber: 1,
 			},
 			wantErr: false,
 			before: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `category_tag_master` WHERE category_tag_name = ? ORDER BY `category_tag_master`.`category_tag_name` LIMIT 1")).
+					WithArgs("categoryTagName").
+					WillReturnRows(sqlmock.NewRows([]string{"category_tag_name", "table_name"}).AddRow("categoryTagName", "daily_records"))
 				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `daily_records` WHERE `daily_records`.`record_date` = ? AND `daily_records`.`fund_name` = ? ORDER BY `daily_records`.`record_date` LIMIT 1")).
 					WithArgs(time.Date(2021, 1, 3, 0, 0, 0, 0, time.Local), "AAA").WillReturnError(gorm.ErrRecordNotFound)
 
@@ -140,13 +153,17 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 					Amount:     100,
 					Valuation:  123.45,
 				}},
-				update: true,
+				categoryTag: "categoryTagName",
+				update:      true,
 			},
 			wantResult: model.CreateRecordResult{
 				UpdatedNumber: 1,
 			},
 			wantErr: false,
 			before: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `category_tag_master` WHERE category_tag_name = ? ORDER BY `category_tag_master`.`category_tag_name` LIMIT 1")).
+					WithArgs("categoryTagName").
+					WillReturnRows(sqlmock.NewRows([]string{"category_tag_name", "table_name"}).AddRow("categoryTagName", "daily_records"))
 				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `daily_records` WHERE `daily_records`.`record_date` = ? AND `daily_records`.`fund_name` = ? ORDER BY `daily_records`.`record_date` LIMIT 1")).
 					WithArgs(time.Date(2021, 1, 4, 0, 0, 0, 0, time.Local), "BBB").
 					WillReturnRows(sqlmock.NewRows([]string{"record_date", "fund_name"}).AddRow(time.Date(2021, 1, 4, 0, 0, 0, 0, time.Local), "BBB"))
@@ -166,13 +183,17 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 					Amount:     100,
 					Valuation:  123.45,
 				}},
-				update: false,
+				categoryTag: "categoryTagName",
+				update:      false,
 			},
 			wantResult: model.CreateRecordResult{
 				FailedNumber: 1,
 			},
 			wantErr: true,
 			before: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `category_tag_master` WHERE category_tag_name = ? ORDER BY `category_tag_master`.`category_tag_name` LIMIT 1")).
+					WithArgs("categoryTagName").
+					WillReturnRows(sqlmock.NewRows([]string{"category_tag_name", "table_name"}).AddRow("categoryTagName", "daily_records"))
 				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `daily_records` WHERE `daily_records`.`record_date` = ? AND `daily_records`.`fund_name` = ? ORDER BY `daily_records`.`record_date` LIMIT 1")).
 					WithArgs(time.Date(2021, 1, 1, 0, 0, 0, 0, time.Local), "AAA").WillReturnError(gorm.ErrRecordNotFound)
 
@@ -180,6 +201,27 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 				mock.ExpectExec(regexp.QuoteMeta("INSERT INTO `daily_records` (`record_date`,`fund_name`,`amount`,`acquisition_price`,`now_price`,`theday_before`,`theday_before_ratio`,`profit`,`profit_ratio`,`valuation`) VALUES (?,?,?,?,?,?,?,?,?,?)")).
 					WillReturnError(gorm.ErrInvalidData)
 				mock.ExpectRollback()
+			},
+		},
+		{
+			name: "failed(tablename not found)",
+			args: args{
+				ctx: context.Background(),
+				records: []model.DailyRecord{{
+					RecordDate: time.Date(2021, 1, 1, 0, 0, 0, 0, time.Local),
+					FundName:   "AAA",
+					Amount:     100,
+					Valuation:  123.45,
+				}},
+				categoryTag: "categoryTagName",
+				update:      false,
+			},
+			wantResult: model.CreateRecordResult{},
+			wantErr:    true,
+			before: func(mock sqlmock.Sqlmock) {
+				mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM `category_tag_master` WHERE category_tag_name = ? ORDER BY `category_tag_master`.`category_tag_name` LIMIT 1")).
+					WithArgs("categoryTagName").
+					WillReturnError(gorm.ErrRecordNotFound)
 			},
 		},
 	}
@@ -190,7 +232,7 @@ func TestDBRepository_SaveRecords(t *testing.T) {
 			dbR := &DBRepository{
 				Conn: db,
 			}
-			gotResult, err := dbR.SaveRecords(tt.args.ctx, tt.args.records, tt.args.update)
+			gotResult, err := dbR.SaveRecords(tt.args.ctx, tt.args.records, tt.args.categoryTag, tt.args.update)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DBRepository.SaveRecords() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -211,8 +253,9 @@ func TestDBRepository_GetDailyRecords(t *testing.T) {
 		Conn *gorm.DB
 	}
 	type args struct {
-		ctx  context.Context
-		date string
+		ctx         context.Context
+		date        string
+		categoryTag string
 	}
 	tests := []struct {
 		name            string
@@ -271,7 +314,7 @@ func TestDBRepository_GetDailyRecords(t *testing.T) {
 			dbR := &DBRepository{
 				Conn: db,
 			}
-			gotRecordsRepl, err := dbR.GetDailyRecords(tt.args.ctx, tt.args.date)
+			gotRecordsRepl, err := dbR.GetDailyRecords(tt.args.ctx, tt.args.date, tt.args.categoryTag)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("DBRepository.GetDailyRecords() error = %v, wantErr %v", err, tt.wantErr)
 				return
