@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"go.uber.org/zap"
@@ -31,6 +32,10 @@ func (r *RegistFileInformation) FillDateByFileName() (err error) {
 		return fmt.Errorf("filename empty")
 	}
 	basefileName := filepath.Base(r.FilePath[:len(r.FilePath)-len(filepath.Ext(r.FilePath))])
+
+	// get YYYYYMMDD from YYYYMMDD_<category_tag>
+	basefileNameArr := strings.Split(basefileName, "_")
+	basefileName = basefileNameArr[0]
 
 	// try to YYYYMMDD parse
 	date := func() (date string) {
@@ -62,6 +67,14 @@ func (r *RegistFileInformation) FillDateByFileName() (err error) {
 	return fmt.Errorf("unrecognize file name")
 }
 
+func getCategoryTag(filePath string) (categoryTag string) {
+	arr := strings.Split(filePath, "_")
+	categoryTag = arr[len(arr)-1]
+	return categoryTag
+}
+
+// YYYYMMDD_<category_tag>.csv をサーバに登録する
+// 例外として、<category_tag> = 1 --> "nisa", <category_tag> = 2 --> "nisa2" に変換する。
 func (u *UsecaseClient) RegistJob(ctx context.Context, filePath string) (err error) {
 	var reg RegistFileInformation
 	reg.FilePath = filePath
@@ -73,7 +86,10 @@ func (u *UsecaseClient) RegistJob(ctx context.Context, filePath string) (err err
 		return err
 	}
 
-	endPoint := "/regist/" + reg.Date
+	// get category tag
+	categoryTag := getCategoryTag(filePath)
+
+	endPoint := "/regist/" + categoryTag + "/" + reg.Date // /regist/<category_tag>/YYYYMMDD
 	resBody, statusCode, err := u.HTTPClient.PostFile(ctx, endPoint, reg.FilePath)
 	if err != nil {
 		u.Logger.Error("failed to post CSV file", zap.Error(err))

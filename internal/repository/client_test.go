@@ -11,7 +11,7 @@ import (
 func TestMain(m *testing.M) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()
-	httpmock.RegisterResponder("POST", "http://example.com:80/regist/20060102",
+	httpmock.RegisterResponder("POST", "http://example.com:80/regist/category/20060102",
 		httpmock.NewStringResponder(200, `{"created_number":5}`),
 	)
 	m.Run()
@@ -39,7 +39,7 @@ func TestClient_PostFile(t *testing.T) {
 		{
 			name:           "ok",
 			fields:         fields{Scheme: "http", Host: "example.com", Port: "80"},
-			args:           args{ctx: context.Background(), endPoint: "/regist/20060102", filePath: "../../test/20060102.csv"},
+			args:           args{ctx: context.Background(), endPoint: "/regist/category/20060102", filePath: "../../test/20060102.csv"},
 			wantResBody:    []byte(`{"created_number":5}`),
 			wantStatusCode: 200,
 			wantErr:        false,
