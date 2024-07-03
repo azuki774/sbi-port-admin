@@ -68,7 +68,8 @@ func (r *RegistFileInformation) FillDateByFileName() (err error) {
 }
 
 func getCategoryTag(filePath string) (categoryTag string) {
-	arr := strings.Split(filePath, "_")
+	basefileName := filepath.Base(filePath[:len(filePath)-len(filepath.Ext(filePath))])
+	arr := strings.Split(basefileName, "_")
 	categoryTag = arr[len(arr)-1]
 	return categoryTag
 }
