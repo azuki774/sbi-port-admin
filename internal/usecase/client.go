@@ -75,7 +75,7 @@ func getCategoryTag(filePath string) (categoryTag string) {
 }
 
 // YYYYMMDD_<category_tag>.csv をサーバに登録する
-// 例外として、<category_tag> = 1 --> "nisa", <category_tag> = 2 --> "nisa2" に変換する。
+// 例外として、<category_tag> = 1 --> "nisa24", <category_tag> = 2 --> "nisa" に変換する。
 func (u *UsecaseClient) RegistJob(ctx context.Context, filePath string) (err error) {
 	var reg RegistFileInformation
 	reg.FilePath = filePath
@@ -89,6 +89,14 @@ func (u *UsecaseClient) RegistJob(ctx context.Context, filePath string) (err err
 
 	// get category tag
 	categoryTag := getCategoryTag(filePath)
+
+	func() { // 一時例外処理
+		if categoryTag == "1" {
+			categoryTag = "nisa24"
+		} else if categoryTag == "2" {
+			categoryTag = "nisa"
+		}
+	}()
 
 	endPoint := "/regist/" + categoryTag + "/" + reg.Date // /regist/<category_tag>/YYYYMMDD
 	resBody, statusCode, err := u.HTTPClient.PostFile(ctx, endPoint, reg.FilePath)
