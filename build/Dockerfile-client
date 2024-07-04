@@ -12,4 +12,4 @@ RUN go mod tidy && go build -a -tags "netgo" -installsuffix netgo -ldflags="-s -
 
 FROM gcr.io/distroless/static-debian11
 COPY --from=builder /app/bin/sbiport-client /usr/local/bin/sbiport-client
-ENTRYPOINT ["/usr/local/bin/sbiport-client", "start"]
+ENTRYPOINT ["/usr/local/bin/sbiport-client", "regist"]

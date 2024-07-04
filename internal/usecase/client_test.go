@@ -38,6 +38,12 @@ func TestRegistFileInformation_FillDateByFileName(t *testing.T) {
 			want:    "20010102",
 		},
 		{
+			name:    "/usr/tmp/20010102_nisa.csv",
+			fields:  fields{FilePath: "/usr/tmp/20010102_nisa.csv"},
+			wantErr: false,
+			want:    "20010102",
+		},
+		{
 			name:    "/usr/tmp/2001-01-02.csv",
 			fields:  fields{FilePath: "/usr/tmp/2001-01-02.csv"},
 			wantErr: false,
@@ -57,7 +63,13 @@ func TestRegistFileInformation_FillDateByFileName(t *testing.T) {
 		},
 		{
 			name:    "20010102.csv",
-			fields:  fields{FilePath: "2001-01-02.csv"},
+			fields:  fields{FilePath: "20010102.csv"},
+			wantErr: false,
+			want:    "20010102",
+		},
+		{
+			name:    "20010102_1.csv",
+			fields:  fields{FilePath: "20010102_1.csv"},
 			wantErr: false,
 			want:    "20010102",
 		},

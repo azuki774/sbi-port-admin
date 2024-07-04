@@ -4,7 +4,6 @@ import (
 	"azuki774/sbiport-server/internal/factory"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -36,7 +35,7 @@ to quickly create a Cobra application.`,
 		RegistInfo.TargetDir = args[0]
 		fInfo, _ := os.Stat(RegistInfo.TargetDir)
 		if fInfo.IsDir() {
-			files, _ := ioutil.ReadDir(RegistInfo.TargetDir)
+			files, _ := os.ReadDir(RegistInfo.TargetDir)
 			for _, f := range files {
 				fileNameList = append(fileNameList, RegistInfo.TargetDir+f.Name())
 			}
