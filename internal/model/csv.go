@@ -1,6 +1,7 @@
 package model
 
 import (
+	"encoding/csv"
 	"fmt"
 	"strconv"
 	"strings"
@@ -17,15 +18,22 @@ type CSVData struct {
 }
 
 func NewCSVRecord(rawStr string, t time.Time) (csvdata CSVData, err error) {
-	var records [][]string
-	rowRecord := strings.Split(rawStr, "\n")
-	for _, v := range rowRecord {
-		comRec := strings.Split(v, ",")
-		if len(comRec) != csvElementSize {
-			// 空行をスキップする
-			continue
+	reader := csv.NewReader(strings.NewReader(rawStr))
+	records, err := reader.ReadAll() // csvを一度に全て読み込む
+	if err != nil {
+		return CSVData{Fields: nil, Date: t}, err
+	}
+	for _, row := range records {
+		// validation
+		if len(row) != csvElementSize {
+			return CSVData{Fields: nil, Date: t}, fmt.Errorf("invalid format csv")
 		}
-		records = append(records, comRec)
+
+		// erase ','
+		for i, e := range row {
+			row[i] = strings.ReplaceAll(e, ",", "")
+		}
+
 	}
 	return CSVData{Fields: records, Date: t}, nil
 }
